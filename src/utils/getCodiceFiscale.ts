@@ -1,4 +1,4 @@
-import consonantsVowels from "./consonantsVowels";
+import consonantsVowels, { isVowel } from "./consonantsVowels";
 import getControlCode from "./getControlCode";
 import getMonthCode from "./getMonthCode";
 
@@ -13,7 +13,17 @@ const getCodiceFiscale = (
     .toUpperCase()
     .slice(0, 4)
     .split("")
-    .filter((_ch, index) => index != 1) // do not select second consonant
+    .filter((_ch, index, arr) => {
+      if (index == 0) return true;
+      // if there are only 3 consonants, select them all
+      // this is done by checking if the fourth (index 3) element is a consonant
+      // therefore from first to fourth characters, we can say they are all
+      // consonants
+      if (index == 1 && arr.length >= 3 && !isVowel(arr[3])) return false;
+      return true;
+    })
+    // ignore 4th character
+    .filter((_ch, index) => index != 3)
     .join("");
   while (processedName.length < 3) processedName.concat("X");
 
