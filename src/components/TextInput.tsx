@@ -35,7 +35,7 @@ const TextInput = ({
         className="border-2 border-gray-500 rounded p-2"
         minLength={minLength}
         maxLength={maxLength}
-        onChange={(event) => onChange?.(event.target.value.trim())}
+        onChange={(event) => onChange?.(event.target.value.trimStart())}
         required={required}
         disabled={disabled}
       />
