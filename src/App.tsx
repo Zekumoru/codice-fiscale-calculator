@@ -4,6 +4,7 @@ import Select from "./components/Select";
 import TextInput from "./components/TextInput";
 import LoadingScreen from "./components/LoadingScreen";
 import useCodiceFiscale from "./hooks/useCodiceFiscale";
+import Footer from "./components/Footer";
 
 function App() {
   const [surname, setSurname] = useState("");
@@ -100,31 +101,8 @@ function App() {
         <button className="p-4 border-2 rounded border-neutral-900 mt-4 text-lg hover:bg-neutral-900 hover:text-white transition">
           Submit
         </button>
-        <div>
-          <h4 className="font-bold text-lg mt-2">Credits</h4>
-          <p>
-            Created by{" "}
-            <a
-              href="https://github.com/Zekumoru/codice-fiscale-calculator"
-              rel="noopener noreferrer"
-              className="underline"
-            >
-              ZekumoruDGH
-            </a>
-          </p>
-          <p>
-            Favicon:{" "}
-            <a
-              href="https://www.flaticon.com/free-icons/business-and-finance"
-              title="business and finance icons"
-              className="underline"
-              rel="noopener noreferrer"
-            >
-              Business and finance icons created by Soodesign - Flaticon
-            </a>
-          </p>
-        </div>
       </form>
+      <Footer />
     </div>
   );
 }
