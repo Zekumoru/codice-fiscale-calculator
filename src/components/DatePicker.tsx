@@ -27,6 +27,9 @@ interface DatePickerProps {
 }
 
 const DatePicker = ({ label, value, onChange }: DatePickerProps) => {
+  const date = new Date(value!.getFullYear(), value!.getMonth() + 1, 1);
+  date.setDate(0);
+
   return (
     <div className="flex flex-col gap-1">
       <div>{label}</div>
@@ -43,7 +46,7 @@ const DatePicker = ({ label, value, onChange }: DatePickerProps) => {
             })
           }
         >
-          {[...Array(31).keys()].map((day) => (
+          {[...Array(date.getDate()).keys()].map((day) => (
             <option key={day} value={day}>
               {(day + 1).toString().padStart(2, "0")}
             </option>
