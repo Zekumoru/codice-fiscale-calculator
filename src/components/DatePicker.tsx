@@ -1,18 +1,18 @@
-import Select from "./Select";
+import Select from './Select';
 
 const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 const years: number[] = [];
@@ -22,14 +22,11 @@ for (let year = new Date().getFullYear(); year >= 1900; year--) {
 
 interface DatePickerProps {
   label?: string;
-  value?: Date;
+  value: Date;
   onChange?: (date: Date | ((date: Date) => Date)) => void;
 }
 
 const DatePicker = ({ label, value, onChange }: DatePickerProps) => {
-  const date = new Date(value!.getFullYear(), value!.getMonth() + 1, 1);
-  date.setDate(0);
-
   return (
     <div className="flex flex-col gap-1">
       <div>{label}</div>
@@ -38,7 +35,7 @@ const DatePicker = ({ label, value, onChange }: DatePickerProps) => {
           id="day-of-birth"
           name="day-of-birth"
           label="Day"
-          value={(value?.getDate() ?? 1) - 1}
+          value={value.getDate() - 1}
           onChange={(day) =>
             onChange?.((date) => {
               date.setDate(Number(day) + 1);
@@ -46,9 +43,13 @@ const DatePicker = ({ label, value, onChange }: DatePickerProps) => {
             })
           }
         >
-          {[...Array(date.getDate()).keys()].map((day) => (
+          {[
+            ...Array(
+              new Date(value.getFullYear(), value.getMonth() + 1, 0).getDate()
+            ).keys(),
+          ].map((day) => (
             <option key={day} value={day}>
-              {(day + 1).toString().padStart(2, "0")}
+              {(day + 1).toString().padStart(2, '0')}
             </option>
           ))}
         </Select>
@@ -56,11 +57,19 @@ const DatePicker = ({ label, value, onChange }: DatePickerProps) => {
           id="month-of-birth"
           name="month-of-birth"
           label="Month"
-          value={value?.getMonth() ?? 0}
+          value={value.getMonth()}
           onChange={(month) =>
-            onChange?.((date) => {
-              date.setMonth(Number(month));
-              return new Date(date);
+            onChange?.(() => {
+              const newDate = new Date(value);
+              newDate.setMonth(Number(month));
+              if (newDate.getDate() != value.getDate()) {
+                // correct day when the chosen month has less days than the
+                // current chosen day (basically, if the new month has 30 days
+                // but the current chosen day is 31 then make it 30)
+                newDate.setMonth(Number(month) + 1);
+                newDate.setDate(0);
+              }
+              return newDate;
             })
           }
         >
@@ -74,11 +83,17 @@ const DatePicker = ({ label, value, onChange }: DatePickerProps) => {
           id="year-of-birth"
           name="year-of-birth"
           label="Year"
-          value={value?.getFullYear() ?? 1900}
+          value={value.getFullYear()}
           onChange={(year) =>
-            onChange?.((date) => {
-              date.setFullYear(Number(year));
-              return new Date(date);
+            onChange?.(() => {
+              const newDate = new Date(value);
+              newDate.setFullYear(Number(year));
+              if (newDate.getDate() != value.getDate()) {
+                // correct day when the chosen year is leap year
+                newDate.setMonth(newDate.getMonth());
+                newDate.setDate(0);
+              }
+              return newDate;
             })
           }
         >
