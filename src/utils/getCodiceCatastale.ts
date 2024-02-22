@@ -1,6 +1,6 @@
-import axios from "axios";
+import axios from 'axios';
 
-const apiLink = "https://axqvoqvbfjpaamphztgd.functions.supabase.co/";
+const apiLink = 'https://axqvoqvbfjpaamphztgd.functions.supabase.co/';
 interface Comune {
   codice: string;
   nome: string;
@@ -61,8 +61,8 @@ const getCodiceCatastale = async (
     (provincia) => provincia.sigla === birthProvince.toUpperCase()
   );
 
-  const comune = comuni[provinciaIndex];
-  const provincia = province[provinciaIndex];
+  const comune = provinciaIndex > 0 ? comuni[provinciaIndex] : comuni[0];
+  const provincia = provinciaIndex > 0 ? province[provinciaIndex] : province[0];
 
   if (provinciaIndex < 0) {
     // no comune and provincia found

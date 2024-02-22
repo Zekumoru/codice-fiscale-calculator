@@ -1,6 +1,6 @@
-import { useState } from "react";
-import getCodiceFiscale from "../utils/getCodiceFiscale";
-import getCodiceCatastale from "../utils/getCodiceCatastale";
+import { useState } from 'react';
+import getCodiceFiscale from '../utils/getCodiceFiscale';
+import getCodiceCatastale from '../utils/getCodiceCatastale';
 
 interface CodiceFiscaleParams {
   name: string;
@@ -11,10 +11,19 @@ interface CodiceFiscaleParams {
   birthProvince: string;
 }
 
+export interface IErrorCodiceFiscale {
+  type: 'api-error' | 'calculation-error';
+  message: string;
+  fields: {
+    field: string;
+    errMessage: string;
+  }[];
+}
+
 const useCodiceFiscale = () => {
-  const [codiceFiscale, setCodiceFiscale] = useState("");
+  const [codiceFiscale, setCodiceFiscale] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<IErrorCodiceFiscale | null>();
 
   const handleCodiceFiscale = async ({
     birth,
@@ -26,16 +35,36 @@ const useCodiceFiscale = () => {
   }: CodiceFiscaleParams) => {
     if (isLoading) return;
 
-    setError("");
+    setError(null);
     setIsLoading(true);
-    const [codiceCatastale] = await getCodiceCatastale(
+    const [codiceCatastale, comune, provincia] = await getCodiceCatastale(
       birthPlace,
       birthProvince
     );
 
     if (!codiceCatastale) {
-      // no comune and provincia found
-      setError("Comune and provincia not found!");
+      // no comune and/or provincia found
+      const error: IErrorCodiceFiscale = {
+        type: 'api-error',
+        message: 'An error occurred while processing the codice catastale.',
+        fields: [],
+      };
+
+      error.fields.push({
+        field: 'comune',
+        errMessage: comune
+          ? 'Check if the province is correct.'
+          : "The place of birth does not exist or it's outside Italy!",
+      });
+
+      error.fields.push({
+        field: 'provincia',
+        errMessage: provincia
+          ? 'Check if the municipality (place of birth) is correct.'
+          : 'The province does not exist!',
+      });
+
+      setError(error);
       setIsLoading(false);
       return;
     }
@@ -50,12 +79,17 @@ const useCodiceFiscale = () => {
 
     if (!codiceFiscale) {
       // could not calculate codice fiscale maybe wrong data
-      setError("Could not calculate codice fiscale, check your inputs!");
+      setError({
+        type: 'calculation-error',
+        message:
+          'Codice fiscale could not be calculated, try double checking your inputs!',
+        fields: [],
+      });
       setIsLoading(false);
       return;
     }
 
-    setCodiceFiscale(codiceFiscale ?? "");
+    setCodiceFiscale(codiceFiscale ?? '');
     setIsLoading(false);
   };
 

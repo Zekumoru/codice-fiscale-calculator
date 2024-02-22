@@ -8,6 +8,7 @@ interface TextInputProps {
   maxLength?: number;
   required?: boolean;
   disabled?: boolean;
+  errMessage?: string;
   onChange?: (value: string) => void;
 }
 
@@ -21,6 +22,7 @@ const TextInput = ({
   maxLength,
   required,
   disabled,
+  errMessage,
   onChange,
 }: TextInputProps) => {
   return (
@@ -39,6 +41,9 @@ const TextInput = ({
         required={required}
         disabled={disabled}
       />
+      {errMessage && (
+        <p className="text-red-600 font-semibold">Error: {errMessage}</p>
+      )}
     </div>
   );
 };
