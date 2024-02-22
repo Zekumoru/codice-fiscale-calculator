@@ -43,14 +43,6 @@ function App() {
         }}
       >
         <TextInput
-          id="codice-fiscale"
-          label="Codice Fiscale"
-          name="codice-fiscale"
-          placeholder="Codice fiscale will appear here..."
-          value={codiceFiscale}
-          disabled
-        />
-        <TextInput
           id="surname"
           label="Surname"
           name="surname"
@@ -107,6 +99,16 @@ function App() {
           <p className="text-red-600 font-semibold">Error: {error.message}</p>
         )}
       </form>
+      <div className="mt-4 text-center">
+        <div className="text-lg">Your codice fiscale is:</div>
+        {codiceFiscale.trim() === '' ? (
+          <div className="mt-2 mb-4 text-2xl italic">
+            (Codice fiscale will appear here)
+          </div>
+        ) : (
+          <div className="mt-2 mb-4 text-2xl font-bold">{codiceFiscale}</div>
+        )}
+      </div>
       <Footer />
     </div>
   );
